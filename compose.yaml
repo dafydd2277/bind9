@@ -1,0 +1,34 @@
+services:
+  bind:
+    image: store/internetsystemsconsortium/bind9:9.16
+    logging:
+      driver: syslog
+      options:
+        tag: cnt-{{.Name}}
+        syslog-address: ${s_syslog_connection_type}://${s_syslog_ip}:${i_syslog_port}
+        syslog-facility: daemon
+    networks:
+      - dhcpd-dns
+    ports:
+#      - 53:53/tcp
+#      - 53:53/udp
+#      - ${s_host_internal_ip}:53:53/tcp
+#      - ${s_host_internal_ip}:53:53/udp
+    volumes:
+      - type: bind
+        source: ./etc/bind
+        target: /etc/bind
+      - type: bind
+        source: ./var/cache/bind
+        target: /var/cache/bind
+      - type: bind
+        source: ./var/lib/bind
+        target: /var/lib/bind
+
+networks:
+ dhcpd-dns:
+  ipam:
+    driver: default
+    config:
+      - subnet: "172.250.0.0/29"
+
